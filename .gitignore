@@ -1,0 +1,57 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+*.pyd
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+build/
+dist/
+wheels/
+*.egg-info
+*.egg
+
+# Packaging
+.tox/
+.nox/
+pip-wheel-metadata/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+.python-version
+.streamlit/secrets.toml
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE/editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local artifacts (data/models/logs)
+data/
+artifacts/
+models_saved/
+checkpoints/
+runs/
+logs/
+*.log
+*.pkl
+*.joblib
