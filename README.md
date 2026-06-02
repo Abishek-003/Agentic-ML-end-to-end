@@ -126,6 +126,3 @@ The dataset must have at least two columns, and one of them must be a valid targ
 - If model training fails on a tiny dataset, try a larger sample or reduce preprocessing choices that create very small folds.
 - If predictions fail after downloading the model bundle, make sure the test file has the same feature columns used during training and that categorical values are spelled consistently.
 
-## License
-
-Add a license here if you want to publish or share the project publicly.
