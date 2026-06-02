@@ -192,6 +192,13 @@ def infer_problem_type_from_metadata(
         return "classification"
 
     unique_ratio = target_unique / rows
+    low_cardinality_cutoff = min(
+        20,
+        max(
+            2,
+            int(rows * 0.05)
+        )
+    )
 
     if (
         "object" in target_dtype
@@ -203,19 +210,85 @@ def infer_problem_type_from_metadata(
         return "classification"
 
     if "int" in target_dtype:
-        if unique_ratio < 0.98:
+        if target_unique <= low_cardinality_cutoff:
             return "classification"
         return "regression"
 
     if "float" in target_dtype:
-        if target_unique <= max(
-            20,
-            int(rows * 0.05)
-        ):
+        if target_unique <= low_cardinality_cutoff:
             return "classification"
         return "regression"
 
     return "regression"
+
+
+def build_target_summary(
+        metadata,
+        target_column
+):
+
+    dtypes = metadata.get(
+        "dtypes",
+        {}
+    )
+
+    nunique = metadata.get(
+        "nunique",
+        {}
+    )
+
+    missing_values = metadata.get(
+        "missing_values",
+        {}
+    )
+
+    sample_rows = metadata.get(
+        "sample_rows",
+        {}
+    )
+
+    summary_statistics = metadata.get(
+        "summary_statistics",
+        {}
+    )
+
+    return {
+
+        "target_column":
+        target_column,
+
+        "dtype":
+        dtypes.get(
+            target_column,
+            ""
+        ),
+
+        "unique_values":
+        nunique.get(
+            target_column,
+            0
+        ),
+
+        "missing_values":
+        missing_values.get(
+            target_column,
+            0
+        ),
+
+        "sample_values":
+        list(
+            sample_rows.get(
+                target_column,
+                {}
+            ).values()
+        ),
+
+        "summary_statistics":
+        summary_statistics.get(
+            target_column,
+            {}
+        )
+    }
 
 
 def analyze_dataset(
@@ -224,19 +297,33 @@ def analyze_dataset(
         target_column
 ):
 
+    target_summary = build_target_summary(
+        metadata,
+        target_column
+    )
+
     prompt = f"""
 You are an expert Machine Learning Engineer.
-
-Dataset Description:
-{description}
-
-Target Column:
-{target_column}
 
 Dataset Metadata:
 {metadata}
 
-The user has already selected the target column.
+Target Column Name:
+{target_column}
+
+Target Column Evidence:
+{target_summary}
+
+Dataset Description:
+{description}
+
+Important instructions:
+
+- Read the target column evidence first.
+- Decide the problem type primarily from the target column dtype, unique values, sample values, and summary statistics.
+- Do NOT choose classification just because the description sounds like a classification task.
+- If the target column is numeric with many distinct values, prefer regression.
+- The user has already selected the target column.
 
 DO NOT identify another target column.
 

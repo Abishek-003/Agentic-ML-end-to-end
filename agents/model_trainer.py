@@ -14,7 +14,11 @@ from sklearn.metrics import (
     roc_auc_score,
     r2_score,
     mean_absolute_error,
-    mean_squared_error
+    mean_squared_error,
+    mean_absolute_percentage_error,
+    median_absolute_error,
+    explained_variance_score,
+    max_error
 )
 
 from sklearn.linear_model import (
@@ -542,7 +546,12 @@ def train_regression_models(
 
         r2_scores = []
         mae_scores = []
+        mse_scores = []
         rmse_scores = []
+        medae_scores = []
+        mape_scores = []
+        evs_scores = []
+        max_error_scores = []
 
         for train_idx, test_idx in cv.split(X):
 
@@ -587,12 +596,47 @@ def train_regression_models(
                 )
             )
 
+            mse_scores.append(
+                mean_squared_error(
+                    y_test,
+                    predictions
+                )
+            )
+
             rmse_scores.append(
                 np.sqrt(
                     mean_squared_error(
                         y_test,
                         predictions
                     )
+                )
+            )
+
+            medae_scores.append(
+                median_absolute_error(
+                    y_test,
+                    predictions
+                )
+            )
+
+            mape_scores.append(
+                mean_absolute_percentage_error(
+                    y_test,
+                    predictions
+                )
+            )
+
+            evs_scores.append(
+                explained_variance_score(
+                    y_test,
+                    predictions
+                )
+            )
+
+            max_error_scores.append(
+                max_error(
+                    y_test,
+                    predictions
                 )
             )
 
@@ -626,10 +670,50 @@ def train_regression_models(
                     4
                 ),
 
+                "MSE Mean":
+                round(
+                    np.mean(
+                        mse_scores
+                    ),
+                    4
+                ),
+
                 "RMSE Mean":
                 round(
                     np.mean(
                         rmse_scores
+                    ),
+                    4
+                ),
+
+                "MedAE Mean":
+                round(
+                    np.mean(
+                        medae_scores
+                    ),
+                    4
+                ),
+
+                "MAPE Mean (%)":
+                round(
+                    np.mean(
+                        mape_scores
+                    ) * 100,
+                    4
+                ),
+
+                "Explained Variance Mean":
+                round(
+                    np.mean(
+                        evs_scores
+                    ),
+                    4
+                ),
+
+                "Max Error Mean":
+                round(
+                    np.mean(
+                        max_error_scores
                     ),
                     4
                 )

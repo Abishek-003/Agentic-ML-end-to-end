@@ -1,33 +1,13 @@
-import os
-
 from openai import OpenAI
-
-from dotenv import load_dotenv
-
-
-load_dotenv()
-
+import streamlit as st
 
 def get_client():
-
-    api_key = os.getenv(
-        "OPENROUTER_API_KEY"
-    )
-
-    if not api_key:
-
-        raise ValueError(
-            "OPENROUTER_API_KEY not found in .env"
-        )
+    api_key = st.secrets["OPENROUTER_API_KEY"]
 
     return OpenAI(
         base_url="https://openrouter.ai/api/v1",
         api_key=api_key
     )
 
-
 client = get_client()
-
-DEFAULT_MODEL = (
-    "qwen/qwen3-32b"
-)
+DEFAULT_MODEL = "qwen/qwen3-32b"

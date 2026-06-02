@@ -1,6 +1,6 @@
 # Agentic ML Pipeline
 
-Agentic ML Pipeline is a Streamlit app for end-to-end tabular machine learning. It lets you upload a dataset, inspect and clean features, generate optional LLM-assisted analysis, run feature engineering and selection, apply dimensionality reduction, and train multiple models for either classification or regression.
+Agentic ML Pipeline is a Streamlit app for end-to-end tabular machine learning. It lets you upload a dataset, inspect and clean features, generate optional LLM-assisted analysis, run optional feature engineering and selection, apply dimensionality reduction, train multiple models, download the best model bundle, and run test predictions for either classification or regression.
 
 ## What It Does
 
@@ -13,6 +13,8 @@ Agentic ML Pipeline is a Streamlit app for end-to-end tabular machine learning. 
 - Trains a model suite and shows a leaderboard with metrics.
 - Generates classification diagnostics such as confusion matrix and classification report.
 - Lets you download the leaderboard as CSV.
+- Lets you download the best model as a reusable bundle with preprocessing metadata.
+- Supports test prediction from a CSV or Excel file, or from a single manually entered row.
 
 ## Tech Stack
 
@@ -66,13 +68,17 @@ uv sync
 
 ## Configuration
 
-The optional LLM features use OpenRouter.
+The optional LLM features use OpenRouter through Streamlit secrets. If no key is configured, the app falls back to heuristic analysis and still runs normally.
 
-Create a `.env` file in the project root with:
+Create `.streamlit/secrets.toml` with:
 
-```env
-OPENROUTER_API_KEY=your_api_key_here
+```toml
+OPENROUTER_API_KEY = "your_api_key_here"
 ```
+
+For a local template, copy [`.streamlit/secrets.toml.example`](.streamlit/secrets.toml.example) to `.streamlit/secrets.toml` and replace the placeholder value.
+
+If you deploy on Streamlit Cloud, paste the same TOML key-value pair into the app's Secrets settings.
 
 The default model is defined in [`utils/llm.py`](utils/llm.py). You can change `DEFAULT_MODEL` there if you want to use a different model.
 
@@ -93,7 +99,8 @@ Then open the local URL shown in the terminal, usually `http://localhost:8501`.
 5. Choose optional feature selection, dimensionality reduction, and imbalance handling.
 6. Click `Train Models`.
 7. Review the leaderboard, best model, and diagnostics.
-8. Download the leaderboard if needed.
+8. Download the leaderboard or the best model bundle if needed.
+9. Use the test prediction tabs to score a CSV/Excel file or a single row of values.
 
 ## Supported Inputs
 
@@ -107,14 +114,17 @@ The dataset must have at least two columns, and one of them must be a valid targ
 
 - Classification and regression are both supported.
 - The app keeps trained model objects in memory for the current session.
+- Feature engineering can be enabled or disabled from the sidebar.
+- The app includes a reset button that clears analysis and training state while keeping the uploaded dataset and description.
 - The leaderboard can be downloaded, but models are not currently persisted to disk.
-- Some pipelines rely on LLM output, so an invalid or missing API key will disable those parts of the workflow.
+- Some pipelines use LLM output when available, but they fall back to heuristic defaults if the API key is missing.
 
 ## Troubleshooting
 
 - If the app says the dataset is empty or unsupported, check the file format and contents.
-- If LLM features fail, confirm that `OPENROUTER_API_KEY` is present in `.env`.
+- If you want LLM-powered analysis, confirm that `OPENROUTER_API_KEY` is present in `.streamlit/secrets.toml`.
 - If model training fails on a tiny dataset, try a larger sample or reduce preprocessing choices that create very small folds.
+- If predictions fail after downloading the model bundle, make sure the test file has the same feature columns used during training and that categorical values are spelled consistently.
 
 ## License
 
