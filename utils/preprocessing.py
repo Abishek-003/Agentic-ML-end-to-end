@@ -121,32 +121,26 @@ def build_preprocessor(
     return preprocessor
 
 
+from sklearn.preprocessing import LabelEncoder
+import pandas as pd
+
+
 def encode_target(y):
 
     label_encoder = None
 
-    if (
-        y.dtype == "object"
-        or
-        str(y.dtype) == "category"
-        or
-        str(y.dtype) == "bool"
-    ):
+    if not pd.api.types.is_numeric_dtype(y):
 
-        label_encoder = (
-            LabelEncoder()
-        )
+        label_encoder = LabelEncoder()
 
-        y = (
-            label_encoder
-            .fit_transform(y)
+        y = label_encoder.fit_transform(
+            y.astype(str)
         )
 
     return (
         y,
         label_encoder
     )
-
 
 def get_feature_names(
         preprocessor,

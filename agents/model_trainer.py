@@ -1,5 +1,5 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 from sklearn.model_selection import (
     StratifiedKFold,
@@ -49,6 +49,9 @@ from sklearn.neighbors import (
 from sklearn.naive_bayes import (
     GaussianNB
 )
+from sklearn.preprocessing import (
+    LabelEncoder
+)
 
 from imblearn.over_sampling import (
     SMOTE
@@ -76,6 +79,30 @@ except Exception:
 # =====================================================
 # CLASSIFICATION MODELS
 # =====================================================
+
+def _encode_classification_target(y):
+
+    y_series = (
+        pd.Series(y)
+        .reset_index(
+            drop=True
+        )
+    )
+
+    label_encoder = (
+        LabelEncoder()
+    )
+
+    encoded_y = (
+        label_encoder.fit_transform(
+            y_series.astype(str)
+        )
+    )
+
+    return (
+        pd.Series(encoded_y),
+        label_encoder
+    )
 
 def get_classification_models(
         use_class_weights=False
@@ -262,6 +289,12 @@ def train_classification_models(
         use_smote=False,
         n_splits=5
 ):
+
+    y, _ = (
+        _encode_classification_target(
+            y
+        )
+    )
 
     models = (
         get_classification_models(
