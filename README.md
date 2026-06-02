@@ -119,10 +119,3 @@ The dataset must have at least two columns, and one of them must be a valid targ
 - The leaderboard can be downloaded, but models are not currently persisted to disk.
 - Some pipelines use LLM output when available, but they fall back to heuristic defaults if the API key is missing.
 
-## Troubleshooting
-
-- If the app says the dataset is empty or unsupported, check the file format and contents.
-- If you want LLM-powered analysis, confirm that `OPENROUTER_API_KEY` is present in `.streamlit/secrets.toml`.
-- If model training fails on a tiny dataset, try a larger sample or reduce preprocessing choices that create very small folds.
-- If predictions fail after downloading the model bundle, make sure the test file has the same feature columns used during training and that categorical values are spelled consistently.
-
